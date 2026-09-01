@@ -20,7 +20,7 @@
   <button class="btn" id="bPractice">PRACTICE</button>
   <button class="btn" id="bSettings">SETTINGS</button>
   <button class="btn" id="bControls">CONTROLS</button>
-  <div class="note" style="margin-top:20px">v2.0 // room-code multiplayer // mobile ready</div>
+  <div class="note" style="margin-top:20px">v2.1 // GLB character models // room-code multiplayer</div>
 </div>
 
 <div id="modeMenu" class="screen hidden"><div class="panel">
@@ -81,7 +81,7 @@
     <b>1 - 9</b><span>Select weapon</span><b>WHEEL</b><span>Cycle weapons</span><b>Q</b><span>Last weapon</span>
     <b>E</b><span>Interact</span><b>TAB</b><span>Scoreboard</span><b>ESC</b><span>Pause</span>
   </div>
-  <div class="note">PHONE: left joystick = move (push fully forward to sprint), right side drag = look, plus on-screen FIRE / ADS / JUMP / RLD / WPN / CRC (crouch) / USE / pause buttons.</div>
+  <div class="note">PHONE: left joystick = move (push fully forward to sprint), right side drag = look, plus FIRE / ADS / JUMP / RLD / WPN / CRC / USE / pause buttons.</div>
   <button class="btn small" id="bCtrlBack" style="margin-top:16px">&larr; BACK</button>
 </div></div>
 
@@ -134,8 +134,10 @@
   <div class="tbtn" id="tInt">USE</div><div class="tbtn" id="tPause">| |</div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
-<script>if(!window.THREE)document.write('<script src="https://unpkg.com/three@0.152.2/build/three.min.js"><\/script>');</script>
+<!-- three r147 UMD build (needed for the classic GLTFLoader / SkeletonUtils scripts) -->
+<script src="https://unpkg.com/three@0.147.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://unpkg.com/three@0.147.0/examples/js/utils/SkeletonUtils.js"></script>
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="game1.js"></script>
 <script src="game2.js"></script>
