@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Model Test</title></head>
+<body style="margin:0;background:#111;color:#0f0;font-family:monospace">
+<div id="log" style="padding:10px;font-size:14px">testing...</div>
+<script src="https://unpkg.com/three@0.147.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://unpkg.com/three@0.147.0/examples/js/utils/SkeletonUtils.js"></script>
+<script>
+const log=m=>document.getElementById("log").innerHTML+=("<br>"+m);
+log("THREE loaded: "+(!!window.THREE)+(window.THREE?" (r"+THREE.REVISION+")":""));
+log("GLTFLoader available: "+(!!(window.THREE&&THREE.GLTFLoader)));
+log("SkeletonUtils available: "+(!!(window.THREE&&THREE.SkeletonUtils)));
+if(window.THREE&&THREE.GLTFLoader){
+ new THREE.GLTFLoader().load("https://threejs.org/examples/models/gltf/Soldier.glb",
+  g=>{log("<b>SOLDIER MODEL LOADED OK ✔</b> meshes: "+g.scene.children.length+", animations: "+g.animations.length);
+   const r=new THREE.WebGLRenderer();r.setSize(300,300);document.body.appendChild(r.domElement);
+   const s=new THREE.Scene();s.background=new THREE.Color(0x222233);
+   s.add(new THREE.HemisphereLight(0xffffff,0x444444,2));
+   const c=new THREE.PerspectiveCamera(50,1,.1,100);c.position.set(0,1.4,3);c.lookAt(0,1,0);
+   g.scene.rotation.y=Math.PI;s.add(g.scene);
+   (function a(){requestAnimationFrame(a);r.render(s,c);})();},
+  x=>{if(x.total)log("downloading... "+Math.round(x.loaded/x.total*100)+"%");},
+  e=>log("<b>MODEL FAILED ✘</b> "+(e&&e.message||e)));
+}else log("<b>LOADER SCRIPTS DID NOT LOAD ✘</b>");
+</script>
+</body></html>
