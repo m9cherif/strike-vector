@@ -20,7 +20,7 @@
   <button class="btn" id="bPractice">PRACTICE</button>
   <button class="btn" id="bSettings">SETTINGS</button>
   <button class="btn" id="bControls">CONTROLS</button>
-  <div class="note" style="margin-top:20px">v1.1 // Three.js // no server required</div>
+  <div class="note" style="margin-top:20px">v2.0 // room-code multiplayer // mobile ready</div>
 </div>
 
 <div id="modeMenu" class="screen hidden"><div class="panel">
@@ -33,23 +33,29 @@
 </div></div>
 
 <div id="mpMenu" class="screen hidden"><div class="panel">
-  <h2>MULTIPLAYER // WEBRTC P2P</h2>
-  <div class="note">This game has <b>no server</b>. Multiplayer is direct peer-to-peer WebRTC. Exchange the signaling codes below with your friend manually (any chat app). One player HOSTS, the other JOINS. If WebRTC is blocked, use Practice mode.</div>
+  <h2>MULTIPLAYER // ROOM CODE</h2>
+  <div class="note">P2P WebRTC. The HOST creates a room and shares the 4-character code. Friends type the code and join. 2 or more players supported. Matchmaking uses the free public PeerJS cloud; gameplay is peer-to-peer.</div>
   <div class="row"><label>NICKNAME</label><input type="text" id="mpName" maxlength="14" value="Player"></div>
-  <div class="row"><label>ROOM CODE (label)</label><input type="text" id="mpRoom" maxlength="10" value="ALPHA-1"></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small acc" id="bHost">HOST GAME</button><button class="btn small acc" id="bJoin">JOIN GAME</button><button class="btn small" id="bDisc">DISCONNECT</button></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn small acc" id="bHostRoom">CREATE ROOM</button>
+    <button class="btn small" id="bLeave">LEAVE ROOM</button>
+  </div>
+  <div id="joinFlow">
+    <div class="row"><label>ROOM CODE</label><input type="text" id="joinCode" maxlength="4" placeholder="e.g. 7KQ2" style="text-transform:uppercase"></div>
+    <button class="btn small acc" id="bJoinRoom">JOIN ROOM</button>
+  </div>
   <div id="hostFlow" class="hidden">
-    <div class="note"><b>STEP 1:</b> Copy this OFFER, send it to your friend.</div>
-    <textarea id="taOffer" readonly></textarea><button class="btn small" id="bCopyOffer">COPY OFFER</button>
-    <div class="note"><b>STEP 2:</b> Paste their ANSWER here:</div>
-    <textarea id="taAnswerIn" placeholder="paste answer code..."></textarea><button class="btn small" id="bAcceptAnswer">CONNECT</button>
+    <div class="row"><label>YOUR ROOM CODE</label><span id="roomCodeBox">----</span>
+      <button class="btn small" id="bCopyCode">COPY</button></div>
+    <div class="row"><label>GAME MODE</label><select id="mpMode">
+      <option value="mp_ffa">FREE FOR ALL (PVP)</option>
+      <option value="mp_tdm">TEAM DEATHMATCH (PVP)</option>
+      <option value="mp_coop">CO-OP SURVIVAL (VS BOTS)</option></select></div>
+    <div class="row"><label>BOT DIFFICULTY (CO-OP)</label><select id="mpDiff"><option value="easy">EASY</option><option value="normal" selected>NORMAL</option><option value="hard">HARD</option><option value="extreme">EXTREME</option></select></div>
+    <button class="btn small acc" id="bStart">START MATCH</button>
   </div>
-  <div id="joinFlow" class="hidden">
-    <div class="note"><b>STEP 1:</b> Paste the host's OFFER:</div>
-    <textarea id="taOfferIn" placeholder="paste offer code..."></textarea><button class="btn small" id="bMakeAnswer">GENERATE ANSWER</button>
-    <div class="note"><b>STEP 2:</b> Copy this ANSWER, send it back to the host:</div>
-    <textarea id="taAnswer" readonly></textarea><button class="btn small" id="bCopyAnswer">COPY ANSWER</button>
-  </div>
+  <div class="note" style="margin-top:8px">PLAYERS IN ROOM (host sets teams for TDM):</div>
+  <div id="lobbyList"></div>
   <div class="row"><label>STATUS</label><span id="mpStatus" style="color:var(--acc2)">OFFLINE</span></div>
   <button class="btn small" id="bMpBack">&larr; BACK</button>
 </div></div>
@@ -71,10 +77,11 @@
   <h2>CONTROLS</h2>
   <div class="kv">
     <b>W A S D</b><span>Move</span><b>MOUSE</b><span>Look</span><b>LMB</b><span>Fire</span><b>RMB</b><span>Aim (ADS)</span>
-    <b>SHIFT</b><span>Sprint (stamina)</span><b>CTRL</b><span>Crouch</span><b>SPACE</b><span>Jump</span><b>R</b><span>Reload</span>
-    <b>1 - 9</b><span>Select weapon</span><b>WHEEL</b><span>Cycle all 16 weapons</span><b>Q</b><span>Last weapon</span>
-    <b>E</b><span>Interact / pick up</span><b>TAB</b><span>Scoreboard</span><b>ESC</b><span>Pause</span>
+    <b>SHIFT</b><span>Sprint</span><b>CTRL</b><span>Crouch</span><b>SPACE</b><span>Jump</span><b>R</b><span>Reload</span>
+    <b>1 - 9</b><span>Select weapon</span><b>WHEEL</b><span>Cycle weapons</span><b>Q</b><span>Last weapon</span>
+    <b>E</b><span>Interact</span><b>TAB</b><span>Scoreboard</span><b>ESC</b><span>Pause</span>
   </div>
+  <div class="note">PHONE: left joystick = move (push fully forward to sprint), right side drag = look, plus on-screen FIRE / ADS / JUMP / RLD / WPN / CRC (crouch) / USE / pause buttons.</div>
   <button class="btn small" id="bCtrlBack" style="margin-top:16px">&larr; BACK</button>
 </div></div>
 
@@ -88,7 +95,7 @@
 
 <div id="endScreen" class="screen hidden"><div class="panel" style="text-align:center">
   <h2 id="endTitle">MATCH OVER</h2>
-  <div id="endWinner" style="font-size:26px;font-weight:900;letter-spacing:.2em;margin:10px 0;color:var(--acc)"></div>
+  <div id="endWinner"></div>
   <div class="kv" style="text-align:left;margin:14px auto;max-width:300px">
     <b>KILLS</b><span id="eK">0</span><b>DEATHS</b><span id="eD">0</span><b>ACCURACY</b><span id="eA">0%</span>
     <b>DAMAGE</b><span id="eDm">0</span><b>BEST STREAK</b><span id="eS">0</span><b>SCORE / XP</b><span id="eXp">0</span>
@@ -109,7 +116,7 @@
   <div id="centerMsg"></div><div id="reloadMsg">RELOADING</div><div id="interact"></div>
   <div id="respawnMsg"><div>YOU WERE ELIMINATED</div><div id="respT"></div></div>
   <div id="bl">
-    <div id="pname">OPERATOR</div>
+    <div id="pname">PLAYER</div>
     <div class="barWrap"><div class="fill" id="hpFill"></div><div class="txt" id="hpTxt">100</div></div>
     <div class="barWrap" style="height:9px"><div class="fill" id="arFill"></div><div class="txt" id="arTxt" style="line-height:9px;font-size:8px">50</div></div>
     <div class="barWrap" style="height:5px"><div class="fill" id="stFill" style="width:100%"></div></div>
@@ -121,22 +128,16 @@
 <div id="touchUI">
   <div id="lookPad"></div>
   <div id="joy"><div id="joyKnob"></div></div>
-  <div class="tbtn" id="tFire">FIRE</div><div class="tbtn" id="tJump">JUMP</div><div class="tbtn" id="tReload">RLD</div><div class="tbtn" id="tWeap">WPN</div>
+  <div class="tbtn" id="tFire">FIRE</div><div class="tbtn" id="tAds">ADS</div>
+  <div class="tbtn" id="tJump">JUMP</div><div class="tbtn" id="tReload">RLD</div>
+  <div class="tbtn" id="tWeap">WPN</div><div class="tbtn" id="tCrouch">CRC</div>
+  <div class="tbtn" id="tInt">USE</div><div class="tbtn" id="tPause">| |</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
 <script>if(!window.THREE)document.write('<script src="https://unpkg.com/three@0.152.2/build/three.min.js"><\/script>');</script>
-<script src="game.js"></script>
-<!--
-  STRIKE VECTOR - developer notes
-  CONTROLS: WASD move, mouse look, LMB fire, RMB aim, Shift sprint, Ctrl crouch,
-  Space jump, R reload, 1-9 weapons, wheel cycle, Q last weapon, E interact,
-  TAB scoreboard, ESC pause.
-  LIBRARIES: Three.js r152 (cdnjs, unpkg fallback). Audio is synthesized with Web Audio API.
-  MULTIPLAYER: serverless WebRTC. Host clicks HOST GAME -> copies OFFER -> sends to
-  friend -> friend pastes it, clicks GENERATE ANSWER -> sends ANSWER back -> host
-  pastes it and clicks CONNECT. Match auto-starts when the DataChannel opens.
-  BROWSERS: recent Chrome / Edge / Firefox with WebGL. Practice mode is fully offline.
--->
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script src="game1.js"></script>
+<script src="game2.js"></script>
 </body>
 </html>
