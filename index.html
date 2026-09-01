@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>STRIKE VECTOR // Browser FPS</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <div id="game"></div>
@@ -134,12 +134,12 @@
   <div class="tbtn" id="tInt">USE</div><div class="tbtn" id="tPause">| |</div>
 </div>
 
-<!-- three r147 UMD build (needed for the classic GLTFLoader / SkeletonUtils scripts) -->
+<!-- three r147 UMD build + classic GLTFLoader / SkeletonUtils (required for net models) -->
 <script src="https://unpkg.com/three@0.147.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://unpkg.com/three@0.147.0/examples/js/utils/SkeletonUtils.js"></script>
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-<script src="game1.js"></script>
-<script src="game2.js"></script>
+<script src="game1.js?v=3"></script>
+<script src="game2.js?v=3"></script>
 </body>
 </html>
